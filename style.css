@@ -1,0 +1,221 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap');
+
+body{
+    margin: 0;
+    padding: 0;
+    font-family: "Lato", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    background-color: #494949;
+}
+
+.new-list-card{
+    height: 20rem;
+    aspect-ratio: 1;
+    margin-left: 150px;
+    margin-top: 30px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #feff9c;
+    font-size: 100px;
+    transition: height 0.5s, background-color 0.5s;
+}
+
+.new-list-card:hover{
+    height: 21rem;
+    cursor: pointer;
+    background-color: #fcfdbf;
+}
+
+.container{
+    height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.test-card{
+    height: 20rem;
+    width: 20rem;
+    margin-left: 150px;
+    margin-top: 30px;
+    padding: 10px;
+    position: relative;
+    background-color: #feff9c;
+}
+
+.card-header{
+    /* background-color: aqua; */
+    font-weight: 700;
+}
+
+.card-title{
+    text-align: center;
+    border: none;
+    background: none;
+    padding-top: 10px;
+    margin: auto;
+    font-size: 40px;
+    font-family: 'Reenie Beanie';
+}
+
+.edit-title-btn{
+    margin-left: 10px;
+}
+
+.edit-title-btn:hover{
+    cursor: pointer;
+}
+
+.card-body{
+    font-weight: 600;
+    height: 80%;
+}
+
+
+li{
+    width: fit-content;
+    margin-top: 5px;
+    font-family: "Reenie Beanie", cursive;
+    font-size: x-large;
+    word-break: break-all;
+    font-weight: 600;
+}
+
+.li-text-container{
+    display: inline;
+}
+
+.li-text-container:hover{
+    cursor: pointer;
+    color: rgb(54, 54, 54);
+}
+
+.task-completed{
+    text-decoration: line-through;
+    color: rgb(82, 82, 82);
+}
+
+.delete-btn{
+    background: none;
+    border: none;
+    font-size: x-large;
+    margin-left: 5px;
+}
+
+.delete-btn:hover{
+    cursor: pointer;
+}
+
+
+.new-li-btn{
+    height: 2rem;
+    width: 5rem;
+    border-radius: 20px;
+    text-align: center;
+    line-height: 2rem;
+    margin: auto;
+    border: 1px solid;
+    font-size: x-large;
+    transition: width 0.5s;
+}
+
+.new-li-btn:hover{
+    width: 5.5rem;
+    border: 3px solid rgb(46, 46, 46);
+    color: rgb(71, 71, 71);
+    cursor: pointer;
+}
+
+.edit-btn{
+    height: 2rem;
+    width: 6rem;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 20px;
+    left: 7rem;
+    font-size: large;
+    transition: height 0.1s;
+}
+
+.edit-btn:hover{
+    height: 2.2rem;
+    width: 6.2rem;
+    background-color: rgb(221, 221, 221);
+    cursor: pointer;
+}
+
+
+.transparent-bg{
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.35);
+    position: fixed;
+    z-index: 1;
+}
+
+.hidden{
+    display: none;
+}
+
+.confirm-btn{
+    height: 3rem;
+    width: 12rem;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    background-color: #e7f9ff;
+    color: #3b3b3b;
+    font-weight: 800;
+    transition: height 0.2s, width 0.2s;
+}
+
+.confirm-btn:hover{
+    height: 3.2rem;
+    width: 12.2rem;
+    background-color: rgb(231, 231, 231);
+    color: #6e6e6e;
+    cursor: pointer;
+}
+
+.new-input{
+    height: 7rem;
+    width: 15rem;
+    background: none;
+    resize: none;
+    font-size: 20px;
+    border-radius: 7px;
+    color: black;
+    font-family: "Lato";
+    font-optical-sizing: auto;
+    font-weight: 600;
+}
+
+.new-input-container{
+    height: 20rem;
+    width: 28rem;
+    position: relative;
+    top: 100px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-weight: 600;
+    font-family: 'Lato';
+    text-transform: uppercase;
+    background-color: #b1b1b1;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-radius: 3.5%;
+    color: black;
+}
