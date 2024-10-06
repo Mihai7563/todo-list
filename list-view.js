@@ -1,5 +1,6 @@
 export class ListView {
     constructor(parentElem, uniqueID) {
+        this.card = null;
         this.parentElem = parentElem;
         this.cardTitle = null;
         this.list = null;
@@ -9,7 +10,9 @@ export class ListView {
         this.uniqueID = uniqueID;
 
         this.init();
+        window.addEventListener(`addRandomStyles${this.uniqueID}`, (e) => this.addRandomStyles(e.detail));
         window.addEventListener(`taskListChange${this.uniqueID}`, (e) => this.updateUI(e));
+        window.addEventListener(`titleChange${this.uniqueID}`, (e) => this.updateUI(e))
     }
 
     init(){
@@ -17,14 +20,15 @@ export class ListView {
         // this.initNewPopup();
     }
 
+    
     initTaskList(){
-        const card = document.createElement('div');
-        card.classList.add('test-card');
-        this.parentElem.append(card);
-
+        this.card = document.createElement('div');
+        this.card.classList.add('test-card');
+        this.parentElem.append(this.card);
+        
         const header = document.createElement('div');
         header.classList.add('card-header');
-        card.append(header);
+        this.card.append(header);
 
         this.title = document.createElement('div');
         this.title.classList.add('card-title')
@@ -38,8 +42,8 @@ export class ListView {
         this.title.append(this.editTitleBtn);
         
         const body = document.createElement('card-body');
-        body.classList.add(card-body);
-        card.append(body);
+        body.classList.add('card-body');
+        this.card.append(body);
         
         this.list = document.createElement('ol');
         body.append(this.list);
@@ -88,19 +92,44 @@ export class ListView {
     }
     
 
+    addRandomStyles(styles){
+        console.log('a');
+        console.log(styles.color);
+        
+
+        this.card.style.backgroundColor = styles.color;
+        
+        switch (styles.tilt) {
+            case 'left':
+               this.card.classList.add('card-tilt-left'); 
+                break;
+            
+            case 'right':
+                this.card.classList.add('card-tilt-right')
+                break;
+            
+            default:
+                break;
+        }
+    }
+
+
     updateUI(event){
+        if(event.detail.type == 'titleEvent'){
+            this.title.textContent = event.detail.name
+        }
+        if(event.detail.type == 'taskListEvent'){
             this.list.innerHTML = '';
             event.detail.tasks.forEach((task, index) => {
     
                 const li = document.createElement('li');
                 this.list.append(li);
-                
+    
                 const liTextContainer = document.createElement('span');
                 liTextContainer.classList.add('li-text-container')
                 liTextContainer.textContent = task.name;
                 
                 console.log(task.createdAt);
-                
                 
                 if(task.done){
                     liTextContainer.classList.add('task-completed');
@@ -134,16 +163,15 @@ export class ListView {
                     window.dispatchEvent(event);
                 })
             });
-        if(event.detail.tasks.length == 4){
-            console.log(event.detail.tasks.length);
-            this.newTaskBtn.classList.add('hidden');
-        }
-        else{
-            console.log(event.detail.tasks.length);
-            
-            this.newTaskBtn.classList.remove('hidden');
-        }
-    
-        
+            if(event.detail.tasks.length == 4){
+                console.log(event.detail.tasks.length);
+                this.newTaskBtn.classList.add('hidden');
+            }
+            else{
+                console.log(event.detail.tasks.length);
+                
+                this.newTaskBtn.classList.remove('hidden');
+            }
+        }    
     }
 }
