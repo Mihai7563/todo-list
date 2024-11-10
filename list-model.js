@@ -1,11 +1,14 @@
 export class ListModel{
     #tasks;
+    #title;
     #localStorageIndex;
 
     constructor(localStorageIndex, uniqueID){
         this.uniqueID = uniqueID;
         this.#localStorageIndex = localStorageIndex;
-        this.#tasks = this.#retrieveStoredTasks();
+        this.storedData = this.#retrieveStoredData();
+        this.#tasks = this.storedData.tasks;
+        this.#title = this.storedData.title || 'Untitled List';
         this.colors = ['#ff7eb9', '#7afcff', '#feff9c'];
         this.tilts = ['left', 'none', 'right'];
         this.taskListStyles = {
@@ -14,7 +17,11 @@ export class ListModel{
         }
 
         this.addRandomStyles();
-        this.dispatchTaskListChangeEvent();
+        
+        window.addEventListener('load', () => {
+            this.dispatchTitleChangeEvent();
+            this.dispatchTaskListChangeEvent();
+        })
         
         window.addEventListener(`createTaskRequest${this.uniqueID}`, (e) => this.addTask(e.detail));
         window.addEventListener(`toggleTaskRequest${this.uniqueID}`, (e) => this.toggleTask(e.detail.index));
@@ -23,14 +30,18 @@ export class ListModel{
     }
     
     
-    #retrieveStoredTasks(){
+    #retrieveStoredData(){
         const storedData = localStorage.getItem(this.#localStorageIndex);
-        return storedData ? JSON.parse(storedData) : [];
+        return storedData ? JSON.parse(storedData) : {tasks: [], title: ''};
     }   
 
     
-    #storeTasks(){
-        localStorage.setItem(this.#localStorageIndex, JSON.stringify(this.#tasks));
+    #storeData(){
+        const dataToStore = {
+            title: this.#title,
+            tasks: this.#tasks
+        }
+        localStorage.setItem(this.#localStorageIndex, JSON.stringify(dataToStore));
     }
     
     
@@ -47,11 +58,11 @@ export class ListModel{
             }
         });
         
-        console.log(`Dispatching addRandomStyles event with data: ${this.taskListStyles}`);
-        console.log(this.taskListStyles);
+        console.log(`Dispatching addRandomStyles event with data:`, this.taskListStyles);
         
-
-        window.dispatchEvent(event);
+        setTimeout(() => {
+            window.dispatchEvent(event);
+        }, 250);
     }
     
     addTask(newTask){
@@ -61,7 +72,7 @@ export class ListModel{
             completed: false
         });
 
-        this.#storeTasks();
+        this.#storeData();
 
         this.dispatchTaskListChangeEvent();
     }
@@ -69,7 +80,7 @@ export class ListModel{
     
     deleteTask(taskIndex){
         this.checkTaskIndex(taskIndex) && this.#tasks.splice(taskIndex, 1);
-        this.#storeTasks();
+        this.#storeData();
 
         this.dispatchTaskListChangeEvent();
     }
@@ -77,13 +88,15 @@ export class ListModel{
 
     clearTaskList(){
         this.#tasks = [];
-        this.#storeTasks();
+        this.#storeData();
     }
     
 
     toggleTask(taskIndex){
         this.checkTaskIndex(taskIndex) && (this.#tasks[taskIndex].completed = !this.#tasks[taskIndex].completed);
-        this.#storeTasks();
+        this.#storeData();
+
+        this.dispatchTaskListChangeEvent();
     }
 
 
@@ -93,14 +106,14 @@ export class ListModel{
     }
 
     editTitle(title){
-        const titleChangedEvent = new CustomEvent(`titleChange${this.uniqueID}`, {
-            detail: {
-                name: title.name,
-                type: 'titleEvent'
-            }
-        });
+        this.#title = title.name;
 
-        window.dispatchEvent(titleChangedEvent);
+        this.#storeData();
+
+        this.dispatchTitleChangeEvent();
+
+        console.log(this.#title);
+        
     }
 
     dispatchTaskListChangeEvent(){
@@ -112,5 +125,18 @@ export class ListModel{
         });
 
         window.dispatchEvent(taskChangedEvent);
+    }
+
+    dispatchTitleChangeEvent(){
+        console.log(this.#title);
+        
+        const titleChangedEvent = new CustomEvent(`titleChange${this.uniqueID}`, {
+            detail: {
+                title: this.#title,
+                type: 'titleEvent'
+            }
+        });
+
+        window.dispatchEvent(titleChangedEvent);
     }
 }

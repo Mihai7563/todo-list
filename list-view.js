@@ -11,6 +11,8 @@ export class ListView {
 
         this.init();
         window.addEventListener(`addRandomStyles${this.uniqueID}`, (e) => this.addRandomStyles(e.detail));
+        console.log(`Added new event listener for event addRandomStyles${this.uniqueID}`);
+        
         window.addEventListener(`taskListChange${this.uniqueID}`, (e) => this.updateUI(e));
         window.addEventListener(`titleChange${this.uniqueID}`, (e) => this.updateUI(e))
     }
@@ -38,7 +40,7 @@ export class ListView {
         this.editTitleBtn = document.createElement('span');
         this.editTitleBtn.classList.add('edit-title-btn');
         this.editTitleBtn.textContent = '✏️';
-        this.editTitleBtn.addEventListener('click', () => this.initNewPopup('Edit Title', 16, `editTitleRequest${this.uniqueID}`));
+        this.editTitleBtn.addEventListener('click', () => this.initNewPopup('Edit Title', 16, `editTitleRequest${this.uniqueID}`, 'title'));
         this.title.append(this.editTitleBtn);
         
         const body = document.createElement('card-body');
@@ -52,11 +54,11 @@ export class ListView {
         this.newTaskBtn.classList.add('new-li-btn');
         body.append(this.newTaskBtn);
         this.newTaskBtn.textContent = '+';
-        this.newTaskBtn.addEventListener('click', () => this.initNewPopup('Add a new task', 40, `createTaskRequest${this.uniqueID}`));
+        this.newTaskBtn.addEventListener('click', () => this.initNewPopup('Add a new task', 40, `createTaskRequest${this.uniqueID}`, 'task'));
     }
 
 
-    initNewPopup(popupText, inputMaxLength, eventName){
+    initNewPopup(popupText, inputMaxLength, eventName, popupType){
         console.log('test');
 
         this.background = document.createElement('div');
@@ -73,21 +75,40 @@ export class ListView {
         this.newInput.classList.add('new-input');
         this.newPopupContainer.append(this.newInput);
         this.newInput.maxLength = inputMaxLength;
-    
+        this.newInput.placeholder = `Please enter your ${popupType} here`
+
+        const btnArea = document.createElement('div');
+        btnArea.classList.add('pop-up-btn-area');
+        this.newPopupContainer.append(btnArea);
+
+        
         this.confirmBtn = document.createElement('div');
-        this.confirmBtn.classList.add('confirm-btn');
-        this.newPopupContainer.append(this.confirmBtn);
+        this.confirmBtn.classList.add('confirm-btn', 'pop-up-btn');
+        btnArea.append(this.confirmBtn);
         this.confirmBtn.textContent = 'CONFIRM';
 
         this.confirmBtn.addEventListener('click', () => {
+            console.log(this.newInput.value);
+
+            if(this.newInput.value.length){
+                this.background.classList.add('hidden');
+                const event = new CustomEvent(eventName, {
+                    detail: {
+                        name: this.newInput.value,
+                        createdAt: Date.now()
+                    }
+                });  
+                window.dispatchEvent(event);
+            }
+        });
+
+        const cancelBtn = document.createElement('div');
+        cancelBtn.classList.add('cancel-btn', 'pop-up-btn');
+        btnArea.append(cancelBtn);
+        cancelBtn.textContent = 'CANCEL';
+    
+        cancelBtn.addEventListener('click', () => {
             this.background.classList.add('hidden');
-            const event = new CustomEvent(eventName, {
-                detail: {
-                    name: this.newInput.value,
-                    createdAt: Date.now()
-                }
-            });  
-            window.dispatchEvent(event);
         });
     }
     
@@ -116,7 +137,14 @@ export class ListView {
 
     updateUI(event){
         if(event.detail.type == 'titleEvent'){
-            this.title.textContent = event.detail.name
+            if (!event.detail.title) {
+                console.error('Title is undefined in updateUI');
+            }    
+            
+            this.title.innerHTML = '';  
+            this.title.textContent = event.detail.title;
+    
+            this.title.append(this.editTitleBtn);
         }
         if(event.detail.type == 'taskListEvent'){
             this.list.innerHTML = '';
@@ -131,17 +159,28 @@ export class ListView {
                 
                 console.log(task.createdAt);
                 
-                if(task.done){
-                    liTextContainer.classList.add('task-completed');
-                }
-    
+                
                 li.append(liTextContainer);
+                
+                //DELETE TASK
                 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.textContent = '🗑️';
                 deleteBtn.classList.add('delete-btn');
                 li.append(deleteBtn);
-    
+                
+                deleteBtn.addEventListener('click', () => {
+                    const event = new CustomEvent(`deleteTaskRequest${this.uniqueID}`, {
+                        detail: {
+                            index
+                        }
+                    });
+                    
+                    window.dispatchEvent(event);
+                });
+                
+                //TOGGLE TASK
+                
                 liTextContainer.addEventListener('click', () => {
                     console.log(`Toggle task ${index}`);
                     const event = new CustomEvent(`toggleTaskRequest${this.uniqueID}`, {
@@ -152,17 +191,12 @@ export class ListView {
                     
                     window.dispatchEvent(event);
                 });
-    
-                deleteBtn.addEventListener('click', () => {
-                    const event = new CustomEvent(`deleteTaskRequest${this.uniqueID}`, {
-                        detail: {
-                            index
-                        }
-                    });
-    
-                    window.dispatchEvent(event);
-                })
+                
+                if(task.completed){
+                    liTextContainer.classList.add('task-completed');
+                }
             });
+    
             if(event.detail.tasks.length == 4){
                 console.log(event.detail.tasks.length);
                 this.newTaskBtn.classList.add('hidden');

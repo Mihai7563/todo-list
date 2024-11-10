@@ -114,7 +114,7 @@ li{
 
 .task-completed{
     text-decoration: line-through;
-    color: rgb(82, 82, 82);
+    color: #525252;
 }
 
 .delete-btn{
@@ -175,33 +175,65 @@ li{
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.35);
     position: fixed;
-    z-index: 1;
+    z-index: 2;
 }
 
 .hidden{
     display: none;
 }
 
-.confirm-btn{
-    height: 3rem;
-    width: 12rem;
+.pop-up-btn-area{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pop-up-btn{
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 10px;
-    background-color: #ff7eb9;
+    font-weight: 800;  
+    cursor: pointer;
+}
+
+.confirm-btn{
+    height: 3rem;
+    width: 12rem;
+    background-color: #f387b8;
     color: #3b3b3b;
-    font-weight: 800;
     transition: height 0.2s, width 0.2s;
 }
 
 .confirm-btn:hover{
-    height: 3.2rem;
-    width: 12.2rem;
-    background-color: rgb(231, 231, 231);
+    height: 3.1rem;
+    width: 12.1rem;
+    background-color: #ffb4d6;
     color: #6e6e6e;
-    cursor: pointer;
+}
+
+.cancel-btn{
+    height: 2.75rem;
+    width: 8.5rem;
+    position: relative;
+    color: #202020;
+}
+
+.cancel-btn::before{
+    content: '';
+    width: 6rem;
+    height: 1rem;
+    position: absolute;
+    /* top: 1.8rem; */
+    left: 4rem;
+    transform: skew(-12deg) translateX(-50%);
+    background-color: #ff7eb870;
+    transition: background-color .5s;
+}
+
+.cancel-btn:hover::before{
+    background-color: #ee5b9da6;
 }
 
 .new-input{
@@ -215,6 +247,12 @@ li{
     font-family: "Lato";
     font-optical-sizing: auto;
     font-weight: 600;
+}
+
+.new-input::placeholder{
+    color: black;
+    font-family: 'Reenie Beanie';
+    font-size: x-large;
 }
 
 .new-input-container{
